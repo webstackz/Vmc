@@ -15,7 +15,18 @@
               <span class="form-control">{{form.complaint_no}}</span>
             </div>
            
-            
+            <div class="form-group">
+              <label>Mobile No</label>
+              <input
+                type="text"
+                class="form-control"
+                @change="setAssessData"
+                :readonly="isEdit"
+                v-model="form.mobile_no"
+                placeholder="Enter Mobile No"
+              />
+              <error-text :error="error.mobile_no"></error-text>
+            </div>
              <div class="form-group">
               <label>Name</label>
               <input type="text" class="form-control" v-model="form.name" placeholder="Enter Name" />
@@ -31,39 +42,7 @@
               />
               <error-text :error="error.assessment_no"></error-text>
             </div>
-            <div class="form-group">
-              <label>Mobile No <small>(Primary Mobile)</small></label>
-              <input
-                type="text"
-                class="form-control"
-                v-model="form.mobile_no"
-                placeholder="Enter Mobile No"
-              />
-              <error-text :error="error.mobile_no"></error-text>
-            </div>
-             <div class="form-group">
-              <label>Mobile No 2</label>
-              <input
-                type="text"
-                class="form-control"
-                v-model="form.mobile_no_2"
-                placeholder="Enter Mobile No"
-              />
-              <error-text :error="error.mobile_no_2"></error-text>
-            </div>
             
-             <div class="form-group">
-              <label>Mobile No 3</label>
-              <input
-                type="text"
-                class="form-control"                          
-                v-model="form.mobile_no_3"
-                placeholder="Enter Mobile No"
-              />
-              <error-text :error="error.mobile_no_3"></error-text>
-            </div>
-   
-
           </div>
           <div class="col col-4">
             <!-- <div class="form-group">

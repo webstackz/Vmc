@@ -72,7 +72,7 @@ class SmsController extends Controller
             if($count){               
                 $send['msg'] = "வேதாரண்யம் நகராட்சி தானியங்கி சேவை மையம் அன்புடன் வரவேற்கிறது. உங்கள் தேவை அறிய நகராட்சி ஊழியர் 290452 என்ற எண்ணிலிருந்து விரைவில் தொடர்பு கொள்வார்.";
             }else{
-               $send['msg'] = "மன்னிக்கவும் இந்த சேவை வேதாரண்யம் நகராட்சி எல்லைக்கு உட்பட்ட பொதுமக்களுக்கு மட்டுமே. நீங்கள் வேதாரண்யம் நகராட்சிக்கு உட்பட்டவராக இருந்தால், உங்கள் விபரங்களை நகராட்சி அலுவலர் அழைப்பின்போது பதிவு செய்து கொண்டு இச்சேவையை பயன்படுத்தலாம்.";               
+               $send['msg'] = "வணக்கம்,இந்த சேவை வேதாரண்யம் நகராட்சி எல்லைக்கு உட்பட்ட பொதுமக்களுக்கு மட்டுமே. நீங்கள் வேதாரண்யம் நகராட்சிக்கு உட்பட்டவராக இருந்தால், உங்கள் விபரங்களை நகராட்சி அலுவலர் அழைப்பின்போது பதிவு செய்து கொண்டு இச்சேவையை விரைவாக பயன்படுத்தலாம்.";              
             }
 
             SmsController::send($send);
@@ -118,19 +118,12 @@ class SmsController extends Controller
 
     public static function sendShopSMS(Request $data){       
 
-
-
-//         $str = '12';
- 
-// if (strpos($str, 'a') !== false) {
-//     echo 'a';
-// }
-
         $complaint = ComplaintView::where(['complaint_no' => $data['complaint_no']])->first();        
         $send['mobile_no'] = $data ['mobile_no'];
         $send['complaint_no'] = $data ['complaint_no'];
         $send['shop_id'] = $data ['shop_id'];
         $send['msg'] = "கோரிக்கை  எண் : " . $send['complaint_no'] . " ற்கு  தங்கள் நிறுவனத்தை நகராட்சி பரிந்துரை செய்துள்ளது. பொதுமக்கள் தேவையறிந்து சேவை செய்ய அன்புடன் கேட்டுக்கொள்கிறோம். சேவை கோரிய நபர் : " . $data['user_mobile_no'] . " முகவரி : " . $complaint->ward_no. " - ". $complaint->street_no. " - " . $complaint->door_no;
+       
        
         SmsController::send($send);  
 
@@ -221,7 +214,7 @@ class SmsController extends Controller
     
     public static function send($data){
         //print_r($data); 
-        return;
+        //return;
         $client = new \GuzzleHttp\Client();
         // Create a request with auth credentials
         $url = 'http://bulk.sms-india.in/send.php?';

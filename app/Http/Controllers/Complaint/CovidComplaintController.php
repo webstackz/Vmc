@@ -176,31 +176,41 @@ class CovidComplaintController extends Controller
        
         $count = Assessment::where('assessment_no', $request->assessment_no)->count();
         
-        // if($request->assessment_no && $count == 0){
-        //     $model = new Assessment;
+        if($request->assessment_no && $count == 0){
+            $model = new Assessment;
 
-        //     DB::transaction(function() use ($model, $request) {
-        //         $model->assessment_no = $request->assessment_no;          
-        //         $model->owner_name = $request->name;           
-        //         $model->ward_no = $request->ward_no;           
-        //         $model->street_no = $request->street_no;           
-        //         $model->door_no = $request->door_no;          
-        //         $model->mobile_no = $request->mobile_no;
-        //         $model->created_at = date('Y-m-d H:i:s');            
-        //         $model->save();
-        //         return $model;
-        //     });
+            DB::transaction(function() use ($model, $request) {
+                $model->assessment_no = $request->assessment_no;          
+                $model->owner_name = $request->name;           
+                $model->ward_no = $request->ward_no;           
+                $model->street_no = $request->street_no;           
+                $model->door_no = $request->door_no;          
+                $model->mobile_no = $request->mobile_no;
+                $model->created_at = date('Y-m-d H:i:s');            
+                $model->save();
+                return $model;
+            });
             
-        //     SmsController::send(array('mobile_no' => $model->mobile_no, 'msg' => "நமது நகராட்சி தானியங்கி மையத்தில் உங்கள் விபரங்கள் பதிவு செய்யப்பட்டு, உங்கள் புகார்/கோரிக்கை ஏற்கப்பட்டது. உங்கள் கோரிக்கை/புகார் எண் : " . $compliant_model->complaint_no));
+            SmsController::send(array('mobile_no' => $model->mobile_no, 'msg' => "நமது நகராட்சி தானியங்கி மையத்தில் உங்கள் விபரங்கள் பதிவு செய்யப்பட்டு, உங்கள் புகார்/கோரிக்கை ஏற்கப்பட்டது. உங்கள் கோரிக்கை/புகார் எண் : " . $compliant_model->complaint_no));
      
-        // } 
+        } else if($request->assessment_no && $count != 0){ 
+            
+            $assess = Assessment::where('assessment_no', $request->assessment_no)->first();
+            $mobile_no_arr = array($assess->mobile_no, $assess->mobile_no_2, $assess->mobile_no_3);
+            
+            if (!in_array($request->mobile_no, $mobile_no_arr)){          
 
-        if($request->assessment_no && $count != 0){                      
+                if(!$assess->mobile_no){
+                    $update_data = ['mobile_no' => $request->mobile_no];
+                } else if(!$assess->mobile_no_2){
+                    $update_data = ['mobile_no_2' => $request->mobile_no];
+                } else{
+                    $update_data = ['mobile_no_3' => $request->mobile_no];
+                }
 
-                $update_data = ['mobile_no' => $request->mobile_no,'mobile_no_2' => $request->mobile_no_2,'mobile_no_3' => $request->mobile_no_3];
                 Assessment::where('assessment_no',  $request->assessment_no)->update($update_data);                
                 
-            
+            }
         }
         
         $this->sendSms(array('status' => $request->status['status_id'] , 'mobile_no' => $request->mobile_no , 'complaint_no' => $compliant_model->complaint_no));
@@ -223,7 +233,7 @@ class CovidComplaintController extends Controller
             SmsController::send(array('mobile_no' => $data['mobile_no'], 'msg' => $msg));   
             SMSHistory::insert(['category' => 'covid19','user_type' => 'user','mobile_no' => $data['mobile_no'],'complaint_no' => $data['complaint_no'], 'message'=> $msg ,'created_at' => date('Y-m-d H:i:s')]);
         } else if($data['status'] == 5){
-            $msg = "மன்னிக்கவும் இந்த சேவை வேதாரண்யம் நகராட்சி எல்லைக்கு உட்பட்ட பொதுமக்களுக்கு மட்டுமே. நீங்கள் வேதாரண்யம் நகராட்சிக்கு உட்பட்டவராக இருந்தால், உங்கள் விபரங்களை நகராட்சி அலுவலர் அழைப்பின்போது பதிவு செய்து கொண்டு இச்சேவையை பயன்படுத்தலாம்.";
+            $msg = "வணக்கம்,இந்த சேவை வேதாரண்யம் நகராட்சி எல்லைக்கு உட்பட்ட பொதுமக்களுக்கு மட்டுமே. நீங்கள் வேதாரண்யம் நகராட்சிக்கு உட்பட்டவராக இருந்தால், உங்கள் விபரங்களை நகராட்சி அலுவலர் அழைப்பின்போது பதிவு செய்து கொண்டு இச்சேவையை விரைவாக பயன்படுத்தலாம்.";
             SmsController::send(array('mobile_no' => $data['mobile_no'], 'msg' => $msg));   
             SMSHistory::insert(['category' => 'covid19','user_type' => 'user','mobile_no' => $data['mobile_no'],'complaint_no' => $data['complaint_no'], 'message'=> $msg ,'created_at' => date('Y-m-d H:i:s')]);
         }
